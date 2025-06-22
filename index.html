@@ -146,117 +146,196 @@
         padding: 10px;
     }
 
-    /* 모바일 반응형 스타일 */
-    @media screen and (max-width: 768px) {
-        body {
-            margin: 0;
-        }
-        
-        .container {
-            padding: 10px;
-            border-radius: 0;
-        }
-        
-        h1 {
-            font-size: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .controls {
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .btn {
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            min-width: unset;
-        }
-
-        /* 테이블을 카드 형태로 변환 */
-        .subject-section table,
-        .subject-section thead,
-        .subject-section tbody,
-        .subject-section th,
-        .subject-section td,
-        .subject-section tr {
-            display: block;
-        }
-
-        .subject-section thead tr {
-            position: absolute;
-            top: -9999px;
-            left: -9999px;
-        }
-
-        .subject-section tr {
-            border: 1px solid #ccc;
-            margin-bottom: 15px;
-            border-radius: 5px;
-            background-color: #fff;
-            padding: 10px;
-        }
-        
-        .subject-section tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        .subject-section td {
-            border: none;
-            border-bottom: 1px solid #eee;
-            position: relative;
-            padding: 10px 5px 10px 45% !important;
-            min-height: 30px;
-            text-align: left !important;
-            vertical-align: middle;
-            display: block;
-        }
-        
-        .subject-section td:last-child {
-            border-bottom: 0;
-        }
-
-        .subject-section td:before {
-            content: attr(data-label);
-            position: absolute;
-            left: 5px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 40%;
-            padding-right: 10px;
-            white-space: normal;
-            text-align: left;
-            font-weight: bold;
-            font-size: 12px;
-            color: #333;
-        }
-
-        .subject-section textarea {
-            width: 100%;
-            font-size: 14px;
-            min-height: 35px;
-        }
-
-        /* 사회 과목 특별 처리 */
-        #social-table td {
-            padding-left: 35% !important;
-        }
-        
-        #social-table td:before {
-            width: 30%;
-        }
-        
-        /* 병합된 셀 특별 처리 */
-        .subject-section .merged-cell {
-            background-color: #f0f8ff;
-        }
-        
-        .subject-section .merged-cell:before {
-            font-weight: bold;
-            color: #2196F3;
-        }
+    /* 모바일 반응형 스타일 (개선됨) */
+@media screen and (max-width: 768px) {
+    body {
+        margin: 0;
     }
+    
+    .container {
+        padding: 10px;
+        border-radius: 0;
+    }
+    
+    h1 {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .controls {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .btn {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+    }
+
+    /* 테이블을 카드 형태로 변환 */
+    .subject-section table,
+    .subject-section thead,
+    .subject-section tbody,
+    .subject-section th,
+    .subject-section td,
+    .subject-section tr {
+        display: block;
+    }
+
+    .subject-section thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    /* 각 행을 명확한 카드로 구분 */
+    .subject-section tr {
+        border: 2px solid #ddd;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        background-color: #fff;
+        padding: 15px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .subject-section tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    /* 셀 스타일 개선 */
+    .subject-section td {
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding: 12px 5px 12px 40% !important;
+        min-height: 40px;
+        text-align: left !important;
+        vertical-align: middle;
+        display: block;
+        margin-bottom: 8px;
+    }
+    
+    .subject-section td:last-child {
+        border-bottom: 0;
+        margin-bottom: 0;
+    }
+
+    /* 레이블 스타일 개선 */
+    .subject-section td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 35%;
+        padding-right: 8px;
+        white-space: normal;
+        text-align: left;
+        font-weight: bold;
+        font-size: 13px;
+        color: #2196F3;
+        line-height: 1.3;
+    }
+
+    /* 영역 셀 특별 처리 */
+    .subject-section .merged-cell {
+        background-color: #e3f2fd;
+        border-radius: 6px;
+        margin-bottom: 12px;
+    }
+    
+    .subject-section .merged-cell:before {
+        color: #1976d2;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    /* textarea 스타일 개선 */
+    .subject-section textarea {
+        width: 100%;
+        font-size: 14px;
+        min-height: 40px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 8px;
+    }
+
+    /* 사회 과목 특별 처리 */
+    #social-table td {
+        padding-left: 35% !important;
+    }
+    
+    #social-table td:before {
+        width: 30%;
+    }
+
+    /* 국어 과목 특별 처리 - 행 구분을 더 명확하게 */
+    #korean-table tr {
+        border-left: 4px solid #4CAF50;
+    }
+    
+    #korean-table .merged-cell {
+        background-color: #e8f5e8;
+    }
+    
+    #korean-table .merged-cell:before {
+        color: #2e7d32;
+    }
+
+    /* 음악 과목 특별 처리 */
+    #music-table tr {
+        border-left: 4px solid #FF9800;
+    }
+    
+    #music-table .merged-cell {
+        background-color: #fff3e0;
+    }
+    
+    #music-table .merged-cell:before {
+        color: #f57c00;
+    }
+
+    /* 도덕 과목 특별 처리 */
+    #moral-table tr {
+        border-left: 4px solid #9C27B0;
+    }
+    
+    #moral-table .merged-cell {
+        background-color: #f3e5f5;
+    }
+    
+    #moral-table .merged-cell:before {
+        color: #7b1fa2;
+    }
+
+    /* 실과 과목 특별 처리 */
+    #practical-table tr {
+        border-left: 4px solid #607D8B;
+    }
+    
+    #practical-table .merged-cell {
+        background-color: #eceff1;
+    }
+    
+    #practical-table .merged-cell:before {
+        color: #455a64;
+    }
+
+    /* 카드 내 구분선 추가 */
+    .subject-section td:not(:last-child):after {
+        content: "";
+        display: block;
+        height: 1px;
+        background-color: #e0e0e0;
+        margin: 8px 0;
+        position: absolute;
+        left: 8px;
+        right: 8px;
+        bottom: -4px;
+    }
+}
+
 
     /* 태블릿 크기 대응 */
     @media screen and (min-width: 769px) and (max-width: 1024px) {
