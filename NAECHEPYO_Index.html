@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내신평가 예시 정답 확인 프로그램</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .subject-section {
+            margin-bottom: 40px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .subject-header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .controls {
+            padding: 15px;
+            background-color: #f9f9f9;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .btn-show {
+            background-color: #2196F3;
+            color: white;
+        }
+        
+        .btn-clear {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        .btn:hover {
+            opacity: 0.8;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+            vertical-align: top;
+            font-size: 12px;
+        }
+        
+        th {
+            background-color: #e0e0e0;
+            font-weight: bold;
+            color: #333;
+            vertical-align: middle;
+        }
+        
+        textarea {
+            width: 95%;
+            min-height: 40px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 12px;
+            font-family: Arial, sans-serif;
+            resize: vertical;
+            box-sizing: border-box;
+            line-height: 1.5;
+        }
+        
+        textarea[disabled] {
+            background-color: #e9e9e9;
+            cursor: not-allowed;
+        }
+        
+        .correct {
+            background-color: #e8f5e8 !important;
+        }
+        
+        .incorrect {
+            background-color: #ffe8e8 !important;
+        }
+        
+        /* [수정됨] merged-cell 스타일에서 세로 쓰기 제거 */
+        .merged-cell {
+            vertical-align: middle;
+        }
+        
+        .music-components {
+            margin-top: 20px;
+            border-top: 2px solid #ddd;
+            padding-top: 20px;
+        }
+        
+        .component-header {
+            background-color: #e0e0e0;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>내신평가 예시 정답 확인 프로그램</h1>
+        
+        <div class="subject-section">
+            <div class="subject-header">국어</div>
+            <div class="controls">
+                <button class="btn btn-show" onclick="showAnswers('korean')">정답 보기</button>
+                <button class="btn btn-clear" onclick="clearAnswers('korean')">정답 지우기</button>
+            </div>
+            <table id="korean-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2">영역</th>
+                        <th rowspan="2">지식이해</th>
+                        <th rowspan="2">과정기능</th>
+                        <th colspan="3">가치태도</th>
+                    </tr>
+                    <tr>
+                        <th>1~2학년</th>
+                        <th>3~4학년</th>
+                        <th>5~6학년</th>
+                    </tr>
+                </thead>
+                <tbody id="korean-tbody">
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="subject-section">
+            <div class="subject-header">음악</div>
+            <div class="controls">
+                <button class="btn btn-show" onclick="showAnswers('music')">정답 보기</button>
+                <button class="btn btn-clear" onclick="clearAnswers('music')">정답 지우기</button>
+            </div>
+            <table id="music-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2">영역</th>
+                        <th colspan="2">지식·이해</th>
+                        <th colspan="2">과정·기능</th>
+                        <th colspan="2">가치·태도</th>
+                    </tr>
+                    <tr>
+                        <th>3~4학년</th>
+                        <th>5~6학년</th>
+                        <th>3~4학년</th>
+                        <th>5~6학년</th>
+                        <th>3~4학년</th>
+                        <th>5~6학년</th>
+                    </tr>
+                </thead>
+                <tbody id="music-tbody">
+                </tbody>
+            </table>
+            
+            <div class="music-components">
+                <div class="component-header">음악의 구성요소</div>
+                <div class="controls">
+                    <button class="btn btn-show" onclick="showAnswers('musicComponents')">정답 보기</button>
+                    <button class="btn btn-clear" onclick="clearAnswers('musicComponents')">정답 지우기</button>
+                </div>
+                <table id="music-components-table">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">구성요소</th>
+                            <th colspan="2">학년별 내용</th>
+                        </tr>
+                        <tr>
+                            <th>3~4학년</th>
+                            <th>5~6학년</th>
+                        </tr>
+                    </thead>
+                    <tbody id="music-components-tbody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="subject-section">
+            <div class="subject-header">사회</div>
+            <div class="controls">
+                <button class="btn btn-show" onclick="showAnswers('social')">정답 보기</button>
+                <button class="btn btn-clear" onclick="clearAnswers('social')">정답 지우기</button>
+            </div>
+            <table id="social-table">
+                <thead>
+                    <tr>
+                        <th>영역</th>
+                        <th>핵심개념</th>
+                        <th>영역</th>
+                        <th>핵심개념</th>
+                        <th>영역</th>
+                        <th>핵심개념</th>
+                    </tr>
+                </thead>
+                <tbody id="social-tbody">
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="subject-section">
+            <div class="subject-header">도덕</div>
+            <div class="controls">
+                <button class="btn btn-show" onclick="showAnswers('moral')">정답 보기</button>
+                <button class="btn btn-clear" onclick="clearAnswers('moral')">정답 지우기</button>
+            </div>
+            <table id="moral-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2">영역</th>
+                        <th colspan="2">지식·이해</th>
+                        <th colspan="2">과정·기능</th>
+                        <th colspan="2">가치·태도</th>
+                    </tr>
+                    <tr>
+                        <th>3~4학년</th>
+                        <th>5~6학년</th>
+                        <th>3~4학년</th>
+                        <th>5~6학년</th>
+                        <th>3~4학년</th>
+                        <th>5~6학년</th>
+                    </tr>
+                </thead>
+                <tbody id="moral-tbody">
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="subject-section">
+            <div class="subject-header">실과</div>
+            <div class="controls">
+                <button class="btn btn-show" onclick="showAnswers('practical')">정답 보기</button>
+                <button class="btn btn-clear" onclick="clearAnswers('practical')">정답 지우기</button>
+            </div>
+            <table id="practical-table">
+                <thead>
+                    <tr>
+                        <th>영역</th>
+                        <th>지식·이해</th>
+                        <th>과정·기능</th>
+                        <th>가치·태도</th>
+                    </tr>
+                </thead>
+                <tbody id="practical-tbody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const answerData = {
+            korean: [
+                {
+                    area: "듣기말하기",
+                    layout_type: 'standard',
+                    knowledge_groups: [
+                        { text: "듣기말하기 맥락", processes: ["내용 확인, 추론, 평가", "내용 생성, 조직, 표현과 전달"] },
+                        { text: "담화 유형", processes: ["상호작용", "점검과 조정"] }
+                    ],
+                    value_groups: {
+                        "1-2": [{ text: "듣기말하기에 대한 흥미", span: 4 }],
+                        "3-4": [{ text: "듣기말하기 효능감", span: 4 }],
+                        "5-6": [{ text: "듣기말하기에 적극적 참여", span: 4 }]
+                    }
+                },
+                {
+                    area: "읽기",
+                    layout_type: 'standard',
+                    knowledge_groups: [
+                        { text: "읽기 맥락", processes: ["읽기의 기초", "내용 확인과 추론"] },
+                        { text: "글의 유형", processes: ["평가와 창의", "점검과 조정"] }
+                    ],
+                    value_groups: {
+                        "1-2": [{ text: "읽기에 대한 흥미", span: 4 }],
+                        "3-4": [{ text: "읽기 효능감", span: 4 }],
+                        "5-6": [{ text: "읽기에 적극적 참여", span: 2 }, { text: "긍정적 읽기 동기", span: 2 }]
+                    }
+                },
+                {
+                    area: "쓰기",
+                    layout_type: 'standard',
+                    knowledge_groups: [
+                        { text: "쓰기 맥락", processes: ["쓰기의 기초", "계획하기"] },
+                        { text: "글의 유형", processes: ["내용 생성하기", "내용 조직하기", "표현하기", "고쳐쓰기", "공유하기", "점검과 조정"] }
+                    ],
+                    value_groups: {
+                        "1-2": [{ text: "쓰기에 대한 흥미", span: 8 }],
+                        "3-4": [{ text: "쓰기 효능감", span: 8 }],
+                        "5-6": [{ text: "쓰기에 적극적 참여", span: 4 }, { text: "쓰기 윤리 준수", span: 4 }]
+                    }
+                },
+                {
+                    area: "문법",
+                    layout_type: 'grid',
+                    total_rows: 3,
+                    columns: {
+                        knowledge: [
+                            { text: "언어의 본질과 맥락", span: 1, type: 'knowledge', col_index: 0 },
+                            { text: "언어 단위", span: 1, type: 'knowledge', col_index: 1 },
+                            { text: "한글의 기초와 국어 규범", span: 1, type: 'knowledge', col_index: 2 }
+                        ],
+                        process: [
+                            { text: "국어의 분석과 활용", span: 2, type: 'process', col_index: 0 },
+                            { text: "국어 실천의 성찰과 비판", span: 1, type: 'process', col_index: 1 }
+                        ],
+                        value_1_2: [
+                            { text: "한글에 대한 호기심", span: 3, type: 'value', grade: '1-2', col_index: 0 }
+                        ],
+                        value_3_4: [
+                            { text: "국어의 소중함 인식", span: 3, type: 'value', grade: '3-4', col_index: 0 }
+                        ],
+                        value_5_6: [
+                            { text: "국어 생활에 대한 민감성", span: 1, type: 'value', grade: '5-6', col_index: 0 },
+                            { text: "집단사회의 언어와 나의 언어의 관계 인식", span: 2, type: 'value', grade: '5-6', col_index: 1 }
+                        ]
+                    }
+                },
+                {
+                    area: "문학",
+                    layout_type: 'standard',
+                    knowledge_groups: [
+                        { text: "갈래", processes: ["작품 읽기와 이해", "해석과 감상"] },
+                        { text: "맥락", processes: ["비평", "창작"] }
+                    ],
+                    value_groups: {
+                        "1-2": [{ text: "문학에 대한 흥미", span: 4 }],
+                        "3-4": [{ text: "작품 감상의 즐거움", span: 4 }],
+                        "5-6": [{ text: "문학을 통한 자아 성찰", span: 2 }, { text: "문학 소통의 즐거움", span: 2 }]
+                    }
+                },
+                 {
+                    area: "매체",
+                    layout_type: 'standard',
+                    knowledge_groups: [
+                        { text: "매체 소통 맥락", processes: ["접근과 선택", "해석과 평가"] },
+                        { text: "매체 자료 유형", processes: ["제작과 공유", "점검과 조정"] }
+                    ],
+                    value_groups: {
+                        "1-2": [{ text: "매체 소통에 대한 흥미와 관심", span: 4 }],
+                        "3-4": [{ text: "매체 소통 윤리", span: 4 }],
+                        "5-6": [{ text: "매체 소통에 대한 성찰", span: 4 }]
+                    }
+                }
+            ],
+            social: {
+                politics_law: [
+                    { domain: "정치", concepts: ["민주주의", "정치과정", "국제 정치"] },
+                    { domain: "법", concepts: ["법과 생활", "인권과 기본권", "헌법과 국가"] },
+                    { domain: "경제", concepts: ["경제생활", "시장 경제", "국가 경제"] },
+                    { domain: "사회·문화", concepts: ["문화 이해", "사회 변동", ""] }
+                ],
+                geography: [
+                    { domain: "지리 인식", concepts: ["위치와 영역", "장소와 지역", "공간 분석"] },
+                    { domain: "자연환경과 인간 생활", concepts: ["기후 환경", "지형 환경", "자연-인간의 상호작용"] },
+                    { domain: "인문환경과 인간 생활", concepts: ["인구", "문화", "도시와 촌락", "경제와 교통"] },
+                    { domain: "지속가능한 세계", concepts: ["갈등과 불균등의 세계", "지속가능한 환경", "공존의 세계"] }
+                ],
+                history: [
+                    { domain: "역사 일반", concepts: ["역사 학습의 기초"] },
+                    { domain: "지역사", concepts: ["지역사"] },
+                    { domain: "한국사", concepts: [
+                        "문명의 발생과 고대 세계의 형성", "국가의 형성과 발전", "통일신라와 발해", "고려의 성립과 변천", "조선의 성립과 발전", "조선 사회의 변동", "근현대 사회로의 전환"
+                    ] }
+                ]
+            },
+            music: [
+                 { area: "연주", knowledge34: "생활 속의 음악", knowledge56: "간단한 악곡의 연주 형태", process34: "노래 부르거나 악기 연주하기", process56: "노래 부르거나 악기 연주하기", values34: "연주를 즐기는 태도", values56: "음악으로 함께하는 태도" },
+                 { area: "", knowledge34: "기초적인 음악 요소", knowledge56: "음악 요소", process34: "신체로 표현하고 놀이하기", process56: "다양한 방법으로 표현하기", values34: "연주에 대한 관심", values56: "연주 준비와 참여" },
+                 { area: "", knowledge34: "자세와 주법", knowledge56: "주법과 표현 기법", process34: "발표하고 이야기하기", process56: "발표하고 돌아보기", values34: "", values56: "" },
+                 { area: "", knowledge34: "느낌, 여러 소리", knowledge56: "어울림, 여러 악기", process34: "", process56: "", values34: "", values56: "" },
+                 { area: "감상", knowledge34: "다양한 종류의 음악", knowledge56: "다양한 종류와 문화권의 음악", process34: "반응하며 듣기", process56: "감지하며 듣기", values34: "소리와 음악을 즐기는 태도", values56: "음악의 아름다움에 대한 인식" },
+                 { area: "", knowledge34: "지역의 음악 문화유산", knowledge56: "우리나라 음악 문화유산", process34: "탐색하고 발견하기", process56: "인식하고 구별하기", values34: "음악에 대한 호기심", values56: "음악에 대한 공감" },
+                 { area: "", knowledge34: "기초적인 음악 요소", knowledge56: "음악 요소", process34: "묘사하거나 이야기하기", process56: "설명하기", values34: "", values56: "" },
+                 { area: "", knowledge34: "음악적 특징", knowledge56: "음악적 특징, 음악의 간단한 구성", process34: "", process56: "", values34: "", values56: "" },
+                 { area: "", knowledge34: "느낌, 분위기, 쓰임", knowledge56: "느낌, 배경, 활용", process34: "", process56: "", values34: "", values56: "" },
+                 { area: "창작", knowledge34: "소리와 음악", knowledge56: "간단한 음악", process34: "즉흥적으로 표현하기", process56: "떠올리며 표현하기", values34: "음악에 대한 흥미", values56: "음악에 대한 자신감" },
+                 { area: "", knowledge34: "기초적인 음악 요소", knowledge56: "음악 요소", process34: "부분적으로 바꾸기", process56: "간단한 조건에 따라 바꾸기", values34: "음악의 새로움을 즐기는 태도", values56: "음악에 대한 열린 태도" },
+                 { area: "", knowledge34: "간단한 악보", knowledge56: "기초적인 기보, 음악 매체", process34: "모방하여 나타내기", process56: "활용하여 만들기", values34: "", values56: "" },
+                 { area: "", knowledge34: "느낌, 상상", knowledge56: "느낌, 아이디어", process34: "", process56: "", values34: "", values56: "" }
+            ],
+            musicComponents: [
+                 { component: "리듬", grade34: "박, 박자", grade56: "박, 박자" },
+                 { component: "", grade34: "장단, 장단의 세", grade56: "장단, 장단의 세" },
+                 { component: "", grade34: "음의 길고 짧음", grade56: "" },
+                 { component: "", grade34: "간단한 리듬꼴", grade56: "여러 가지 리듬꼴" },
+                 { component: "", grade34: "장단꼴", grade56: "장단꼴" },
+                 { component: "", grade34: "말붙임새", grade56: "말붙임새" },
+                 { component: "가락", grade34: "음의 높고 낮음", grade56: "음이름, 계이름, 율명" },
+                 { component: "", grade34: "차례가기와 뛰어가기", grade56: "장음계, 단음계" },
+                 { component: "", grade34: "", grade56: "여러 지역의 토리" },
+                 { component: "", grade34: "시김새", grade56: "시김새" },
+                 { component: "화성", grade34: "", grade56: "주요 3화음" },
+                 { component: "", grade34: "소리의 어울림", grade56: "다양한 소리의 어울림" },
+                 { component: "형식", grade34: "형식(메기고 받는 형식, ab 등)", grade56: "형식(긴자진 형식, 시조 형식, aba, AB 등)" },
+                 { component: "셈여림", grade34: "셈여림", grade56: "셈여림의 변화" },
+                 { component: "빠르기", grade34: "빠르기/ 한배", grade56: "빠르기의 변화/ 한배의 변화" },
+                 { component: "음색", grade34: "목소리, 물체 소리, 타악기의 음색", grade56: "관악기, 현악기의 음색" }
+            ],
+            moral: [
+                 { area: "자신과의 관계", knowledge34: "나는 왜 소중한 사람인가?", knowledge56: "자주적으로 살아야 하는 이유는 무엇일까?", process34: "자신을 탐구하여 자기감정의 소중함 설명하기", process56: "자주의 의미를 살펴보고 자신의 생활에 반영하기", values34: "자기를 소중히 하는 태도", values56: "주체적인 삶의 태도" },
+                 { area: "", knowledge34: "어떤 사람을 정직한 사람이라고 하는가", knowledge56: "자신의 생활을 반성하는 일은 왜 중요할까?", process34: "정직한 행동 찾아보기", process56: "자신의 생활 점검하여 성찰하기", values34: "정직하게 행동하려는 자세", values56: "반성하는 태도" },
+                 { area: "", knowledge34: "자신에게 정성을 다하는 삶을 살아야 하는 이유는 무엇인가?", knowledge56: "자신이 하고 싶은 일을 선택할 때 어떤 것을 고려해야 할까?", process34: "성실한 생활의 모범 정하기", process56: "자신의 적성을 도덕적으로 탐색하기", values34: "성실한 태도", values56: "도덕적 성장을 지향하는 자세" },
+                 { area: "", knowledge34: "도덕적으로 행동하는 일은 왜 필요할까?", knowledge56: "", process34: "다른 사람의 관점에서 문제 바라보기", process56: "", values34: "도덕적으로 행동하려는 자세", values56: "" },
+                 { area: "타인과의 관계", knowledge34: "가족의 행복을 위해 무엇을 해야 할까?", knowledge56: "타인을 왜 도와야 하며, 어떻게 도울 수 있을까?", process34: "효우애의 의미 설명하기", process56: "타인의 상황을 주의 깊게 관찰하고 다양한 도움 방안 탐색하기", values34: "가족을 사랑하는 태도", values56: "타인을 위하는 자세" },
+                 { area: "", knowledge34: "친구끼리 배려해야 하는 이유는 무엇일까?", knowledge56: "서로의 다름을 존중해야 하는 이유는 무엇일까?", process34: "친구를 서로 배려하는 방법 탐색하기", process56: "편견 사례를 찾고 수정 방안 제안하기", values34: "친구를 배려하는 자세", values56: "다양성을 존중하는 태도" },
+                 { area: "", knowledge34: "타인에 대한 공감은 왜 필요할까?", knowledge56: "인공지능 로봇과 친구가 될 수 있을까?", process34: "타인의 감정 함께 나누기", process56: "인공지능 로봇과 관계 맺을 때 필요한 윤리적 원칙 점검하기", values34: "타인에 공감하는 태도", values56: "인공지능 로봇과의 바른 관계 형성 의지 함양" },
+                 { area: "사회공동체와의 관계", knowledge34: "공정한 사회를 위해서 내가 할 일은 무엇일까?", knowledge56: "인권을 존중해야 하는 이유는 무엇일까?", process34: "불공정한 사례 분석을 통해 공정사회를 위해 내가 할 일 탐색하기", process56: "인권 관련 문제 사례 조사하기", values34: "공정을 실천하려는 태도", values56: "인권 감수성 함양" },
+                 { area: "", knowledge34: "디지털 사회에서 발생하는 문제를 어떻게 해결할까?", knowledge56: "정의로운 공동체를 위해 어떻게 행동해야 하는가?", process34: "디지털 사회에서 발생하는 문제를 알아보고 해결방안 탐색하기", process56: "정의로운 공동체를 위한 규칙 고안하기", values34: "정보통신 윤리의식 함양", values56: "정의로운 공동체 형성 의지 함양" },
+                 { area: "", knowledge34: "통일은 왜 필요할까?", knowledge56: "통일과정과 통일 이후 사회는 어떤 모습이어야 할까?", process34: "통일의 필요성 설명하기", process56: "통일과정과 통일 이후 바람직한 사회 모습 탐색하기", values34: "통일 감수성 함양", values56: "통일을 추구하는 태도와 의지 함양" },
+                 { area: "", knowledge34: "", knowledge56: "다른 나라의 사람들까지 사랑해야 하는 이유는 무엇일까?", process34: "", process56: "다른 나라의 사람들이 겪는 문제를 살펴보고 해결 방안 생각하기", values34: "", values56: "인류를 사랑하는 태도" },
+                 { area: "자연과의 관계", knowledge34: "생명은 왜 소중할까?", knowledge56: "환경 위기를 극복하기 위해 어떻게 해야 하는가?", process34: "생명 경시 사례 조사하기", process56: "환경 위기를 극복하기 위한 방안 살펴보기", values34: "생명에 대한 존중", values56: "환경 위기를 극복하는 자세" },
+                 { area: "", knowledge34: "인간과 자연이 함께 살아야 하는 이유는 무엇일까?", knowledge56: "지속가능한 삶이란 무엇일까?", process34: "자연과 공생하기 위해 자신이 할 수 있는 일 탐색하기", process56: "미래 세대의 권리를 지키기 위한 계획 세우기", values34: "생태 감수성 함양", values56: "미래 세대에 대한 책임 의식 함양" }
+            ],
+            practical: [
+                 { area: "인간 발달과 주도적 삶", knowledge: "아동기 발달과 자기이해", process: "건강한 발달을 위한 자기 관리 방법 탐색하기", values: "아동기 발달에 대한 긍정적인 수용" },
+                 { area: "", knowledge: "자립적 일상생활", process: "자립적 일상생활에 필요한 조건 살펴보기", values: "일상생활 속 올바른 생활습관과 예절을 실천하는 태도" },
+                 { area: "", knowledge: "균형 잡힌 식사", process: "가족원의 다양한 요구 파악하기", values: "가족 간 배려와 돌봄의 가치" },
+                 { area: "", knowledge: "옷의 기능과 옷차림", process: "바람직한 식습관 형성하기", values: "협력적 소통에 기반한 역할 분담의 가치 수용" },
+                 { area: "", knowledge: "가정생활과 가정일", process: "건강하고 적절한 옷차림 파악하기", values: "일과 노동의 가치" },
+                 { area: "", knowledge: "진로 발달과 직업", process: "가정생활을 유지하는 가정일의 종류 살펴보기", values: "진로를 주도적으로 탐색하는 태도" },
+                 { area: "", knowledge: "", process: "가정일 수행에 참여하기", values: "" },
+                 { area: "생활환경과 지속가능한 선택", knowledge: "생활자원의 특징", process: "생활자원의 사용가치를 높이는 방법 탐색하기", values: "생활자원을 소중하게 여기는 태도" },
+                 { area: "", knowledge: "생활자원의 보관과 활용", process: "합리적인 관리 방법 실천하기", values: "함께하는 식사의 즐거움" },
+                 { area: "", knowledge: "식재료의 생산과 선택", process: "자신의 선택이 공동체의 삶과 환경에 미치는 영향 설명하기", values: "식사 예절을 실천하는 태도" },
+                 { area: "", knowledge: "음식의 마련과 섭취", process: "음식을 마련하는 과정 체험하기", values: "직접 만들어 쓰기의 가치와 창의적 태도" },
+                 { area: "", knowledge: "옷이나 생활용품의 구성", process: "생활용품을 만드는 과정 경험하기", values: "제작 과정에서 절차적 사고를 중시하는 태도" },
+                 { area: "", knowledge: "생활공간과 정리정돈", process: "생활 속 의생활 문제 해결하기", values: "안전한 생활을 실천하는 태도" },
+                 { area: "", knowledge: "지속가능한 의식주생활", process: "생활공간을 청결하게 하는 과정 경험하기", values: "쾌적한 생활공간 유지를 위한 노력" },
+                 { area: "", knowledge: "", process: "일상생활에서의 지속가능한 행동을 계획하여 실천하기", values: "나눔의 봉사활동과 기부문화의 존중" },
+                 { area: "기술적 문제해결과 혁신", knowledge: "발명의 의미와 발명품", process: "생활 속 기술적 문제 확인하기", values: "발명과 기술에 대한 관심과 흥미" },
+                 { area: "", knowledge: "기술적 문제 해결과 발명사고기법", process: "창의적인 제품 구상하기", values: "기술에 대한 가치 인식" },
+                 { area: "", knowledge: "발명과 특허의 개념", process: "발명 제품의 설계와 제작하기", values: "발명 아이디어 발상의 실천적 태도" },
+                 { area: "", knowledge: "지식재산권의 중요성", process: "발명품의 특허 정보 검색하기", values: "지식재산보호에 대한 인식" },
+                 { area: "", knowledge: "수송의 의미와 수송 수단의 발달", process: "다양한 수송 수단 탐색하기", values: "미래 수송 수단에 대한 관심" },
+                 { area: "", knowledge: "수송 수단의 구성 요소", process: "친환경 수송 수단의 설계와 제작하기", values: "" },
+                 { area: "지속가능한 기술과 융합", knowledge: "건설기술의 개념과 친환경 구조물", process: "생활 속 건설 구조물 탐색과 체험하기", values: "건설기술에 대한 가치 인식" },
+                 { area: "", knowledge: "디지털 기술의 특징과 디지털 콘텐츠의 종류", process: "디지털 콘텐츠의 제작과 공유하기", values: "로봇에 대한 관심과 흥미" },
+                 { area: "", knowledge: "로봇의 개념과 작동 원리", process: "간단한 로봇의 조립과 작동시키기", values: "건전한 사이버 공간의 활용 태도" },
+                 { area: "", knowledge: "로봇 융합기술의 이해", process: "로봇의 동작에 코딩 프로그램 적용하기", values: "동식물에 대한 생태존중감을 갖는 태도" },
+                 { area: "", knowledge: "생활 속 동식물의 이해", process: "융합적 사고하기", values: "지속가능한 농업의 순환성과 중요성 인식" },
+                 { area: "", knowledge: "동식물 자원의 분류", process: "동식물과 관련된 생명기술 탐색하기", values: "농업에 대한 관심과 흥미" },
+                 { area: "", knowledge: "동식물 자원의 친환경 농업", process: "동식물을 기르고 가꾸기", values: "농산업에 대한 올바른 진로관을 갖는 태도" },
+                 { area: "", knowledge: "미래생활과 연관된 농업활동", process: "생활 속 농업활동 체험하기", values: "" },
+                 { area: "", knowledge: "농업과 농촌의 다원적인 역할", process: "", values: "" },
+                 { area: "디지털 사회와 인공지능", knowledge: "컴퓨터의 개념", process: "생활 속에서 활용되는 컴퓨터의 사례 탐색하기", values: "생활 속에서 컴퓨터를 활용해 해결 가능한 문제를 탐색해 보려는 자세" },
+                 { area: "", knowledge: "문제 찾기와 문제 해결 절차", process: "일상생활의 문제를 해결하기 위한 알고리즘 구상하기", values: "프로그래밍을 통해 만든 산출물을 타인과 공유하고 협력하려는 자세" },
+                 { area: "", knowledge: "컴퓨터에게 명령하는 방법", process: "문제를 해결하는 기초적인 프로그래밍하기", values: "생활 속의 여러 가지 데이터가 갖는 의미를 파악하는 자세" },
+                 { area: "", knowledge: "데이터의 종류와 표현", process: "데이터 간에 공통되는 유형이나 형태 탐색하기", values: "인공지능이 사회에 미치는 영향을 파악하는 자세" },
+                 { area: "", knowledge: "생활 속 인공지능", process: "인공지능이 만들어지는 과정 탐색하기", values: "" }
+            ]
+        };
+
+        function generateKoreanTable() {
+            const tbody = document.getElementById('korean-tbody');
+            tbody.innerHTML = ''; 
+            answerData.korean.forEach((areaData, areaIndex) => {
+                if (areaData.layout_type === 'grid') {
+                    const { total_rows, columns } = areaData;
+                    let rows = Array.from({ length: total_rows }, () => document.createElement('tr'));
+                    
+                    const areaCell = document.createElement('td');
+                    areaCell.rowSpan = total_rows;
+                    areaCell.classList.add('merged-cell');
+                    areaCell.innerHTML = `<textarea data-subject="korean" data-type="area" data-index="${areaIndex}" oninput="checkAnswer(this)"></textarea>`;
+                    rows[0].appendChild(areaCell);
+
+                    const columnOrder = ['knowledge', 'process', 'value_1_2', 'value_3_4', 'value_5_6'];
+                    columnOrder.forEach(colKey => {
+                        const columnItems = columns[colKey];
+                        if (!columnItems) return;
+                        
+                        let currentRow = 0;
+                        columnItems.forEach((cellData) => {
+                            const cell = document.createElement('td');
+                            cell.rowSpan = cellData.span;
+                            const dataAttrs = `data-subject="korean" data-type="${cellData.type}" data-index="${areaIndex}" data-col-index="${cellData.col_index}" ${cellData.grade ? `data-grade="${cellData.grade}"` : ''}`;
+                            cell.innerHTML = `<textarea ${dataAttrs} oninput="checkAnswer(this)"></textarea>`;
+                            rows[currentRow].appendChild(cell);
+                            currentRow += cellData.span;
+                        });
+                    });
+                    rows.forEach(row => tbody.appendChild(row));
+
+                } else { // 'standard' layout
+                    let totalRows = areaData.knowledge_groups.reduce((sum, kg) => sum + Math.max(1, kg.processes.length), 0);
+                    let rows = Array.from({ length: totalRows }, () => document.createElement('tr'));
+
+                    const areaCell = document.createElement('td');
+                    areaCell.rowSpan = totalRows;
+                    areaCell.classList.add('merged-cell');
+                    areaCell.innerHTML = `<textarea data-subject="korean" data-type="area" data-index="${areaIndex}" oninput="checkAnswer(this)"></textarea>`;
+                    if(rows.length > 0) rows[0].appendChild(areaCell);
+
+                    let currentRowIndex = 0;
+                    areaData.knowledge_groups.forEach((kg, kgIndex) => {
+                        const knowledgeSpan = Math.max(1, kg.processes.length);
+                        const knowledgeCell = document.createElement('td');
+                        knowledgeCell.rowSpan = knowledgeSpan;
+                        knowledgeCell.innerHTML = `<textarea data-subject="korean" data-type="knowledge" data-index="${areaIndex}" data-group-index="${kgIndex}" oninput="checkAnswer(this)"></textarea>`;
+                        rows[currentRowIndex].appendChild(knowledgeCell);
+
+                        if (kg.processes.length > 0) {
+                            kg.processes.forEach((proc, procIndex) => {
+                                const processCell = document.createElement('td');
+                                processCell.innerHTML = `<textarea data-subject="korean" data-type="process" data-index="${areaIndex}" data-group-index="${kgIndex}" data-sub-index="${procIndex}" oninput="checkAnswer(this)"></textarea>`;
+                                rows[currentRowIndex + procIndex].appendChild(processCell);
+                            });
+                        } else {
+                            const processCell = document.createElement('td');
+                            processCell.innerHTML = `<textarea disabled></textarea>`;
+                            rows[currentRowIndex].appendChild(processCell);
+                        }
+                        currentRowIndex += knowledgeSpan;
+                    });
+                    
+                    Object.keys(areaData.value_groups).forEach(gradeKey => {
+                        let valueRowIndex = 0;
+                        areaData.value_groups[gradeKey].forEach((vg, vgIndex) => {
+                            const valueCell = document.createElement('td');
+                            valueCell.rowSpan = vg.span;
+                            valueCell.innerHTML = `<textarea data-subject="korean" data-type="value" data-grade="${gradeKey}" data-index="${areaIndex}" data-sub-index="${vgIndex}" oninput="checkAnswer(this)"></textarea>`;
+                            rows[valueRowIndex].appendChild(valueCell);
+                            valueRowIndex += vg.span;
+                        });
+                    });
+                    rows.forEach(row => tbody.appendChild(row));
+                }
+            });
+        }
+        
+        function generateMusicTable() {
+             const tbody = document.getElementById('music-tbody');
+             tbody.innerHTML = '';
+             let currentAreaRowspan = 0;
+             answerData.music.forEach((item, index) => {
+                 const row = document.createElement('tr');
+                 if (item.area !== "") {
+                     currentAreaRowspan = 1;
+                     for (let i = index + 1; i < answerData.music.length; i++) {
+                         if (answerData.music[i].area === "") { currentAreaRowspan++; } else { break; }
+                     }
+                     const areaCell = document.createElement('td');
+                     areaCell.rowSpan = currentAreaRowspan;
+                     areaCell.innerHTML = `<textarea data-subject="music" data-type="area" data-index="${index}" oninput="checkAnswer(this)"></textarea>`;
+                     areaCell.classList.add('merged-cell');
+                     row.appendChild(areaCell);
+                 }
+                 ['knowledge34', 'knowledge56', 'process34', 'process56', 'values34', 'values56'].forEach(type => {
+                     const cell = document.createElement('td');
+                     if (item[type] === "" || item[type] === undefined) {
+                         cell.innerHTML = `<textarea disabled></textarea>`;
+                     } else {
+                         cell.innerHTML = `<textarea data-subject="music" data-type="${type}" data-index="${index}" oninput="checkAnswer(this)"></textarea>`;
+                     }
+                     row.appendChild(cell);
+                 });
+                 tbody.appendChild(row);
+             });
+        }
+
+        function generateMusicComponentsTable() {
+             const tbody = document.getElementById('music-components-tbody');
+             tbody.innerHTML = '';
+             let currentComponentRowspan = 0;
+             answerData.musicComponents.forEach((item, index) => {
+                 const row = document.createElement('tr');
+                 if (item.component !== "") {
+                     currentComponentRowspan = 1;
+                     for (let i = index + 1; i < answerData.musicComponents.length; i++) {
+                         if (answerData.musicComponents[i].component === "") { currentComponentRowspan++; } else { break; }
+                     }
+                     const componentCell = document.createElement('td');
+                     componentCell.rowSpan = currentComponentRowspan;
+                     componentCell.innerHTML = `<textarea data-subject="musicComponents" data-type="component" data-index="${index}" oninput="checkAnswer(this)"></textarea>`;
+                     componentCell.classList.add('merged-cell');
+                     row.appendChild(componentCell);
+                 }
+                 ['grade34', 'grade56'].forEach(type => {
+                     const cell = document.createElement('td');
+                     if (item[type] === "" || item[type] === undefined) {
+                         cell.innerHTML = `<textarea disabled></textarea>`;
+                     } else {
+                         cell.innerHTML = `<textarea data-subject="musicComponents" data-type="${type}" data-index="${index}" oninput="checkAnswer(this)"></textarea>`;
+                     }
+                     row.appendChild(cell);
+                 });
+                 tbody.appendChild(row);
+             });
+        }
+
+        function generateSocialTable() {
+            const tbody = document.getElementById('social-tbody');
+            tbody.innerHTML = '';
+            const { politics_law, geography, history } = answerData.social;
+
+            const calcRows = (group) => group.reduce((sum, item) => sum + item.concepts.length, 0);
+            const totalRows = Math.max(calcRows(politics_law), calcRows(geography), calcRows(history));
+
+            let rows = Array.from({ length: totalRows }, () => document.createElement('tr'));
+
+            const populateGroup = (groupData, groupKey) => {
+                let currentRow = 0;
+                groupData.forEach((domainItem, domainIndex) => {
+                    const domainSpan = domainItem.concepts.length;
+                    const domainCell = document.createElement('td');
+                    domainCell.rowSpan = domainSpan;
+                    domainCell.classList.add('merged-cell');
+                    domainCell.innerHTML = `<textarea data-subject="social" data-type="domain" data-group="${groupKey}" data-index="${domainIndex}" oninput="checkAnswer(this)"></textarea>`;
+                    rows[currentRow].appendChild(domainCell);
+
+                    domainItem.concepts.forEach((concept, conceptIndex) => {
+                        const conceptCell = document.createElement('td');
+                        if(concept){
+                             conceptCell.innerHTML = `<textarea data-subject="social" data-type="concept" data-group="${groupKey}" data-index="${domainIndex}" data-sub-index="${conceptIndex}" oninput="checkAnswer(this)"></textarea>`;
+                        } else {
+                             conceptCell.innerHTML = `<textarea disabled></textarea>`;
+                        }
+                        rows[currentRow + conceptIndex].appendChild(conceptCell);
+                    });
+                    currentRow += domainSpan;
+                });
+                for (let i = currentRow; i < totalRows; i++) {
+                    const emptyCell1 = document.createElement('td');
+                    const emptyCell2 = document.createElement('td');
+                    emptyCell1.innerHTML = `<textarea disabled></textarea>`;
+                    emptyCell2.innerHTML = `<textarea disabled></textarea>`;
+                    rows[i].appendChild(emptyCell1);
+                    rows[i].appendChild(emptyCell2);
+                }
+            };
+            
+            populateGroup(politics_law, 'politics_law');
+            populateGroup(geography, 'geography');
+            populateGroup(history, 'history');
+
+            rows.forEach(row => tbody.appendChild(row));
+        }
+
+        function generateMoralTable() {
+             const tbody = document.getElementById('moral-tbody');
+             tbody.innerHTML = '';
+             let currentAreaRowspan = 0;
+             answerData.moral.forEach((item, index) => {
+                 const row = document.createElement('tr');
+                 if (item.area !== "") {
+                     currentAreaRowspan = 1;
+                     for (let i = index + 1; i < answerData.moral.length; i++) {
+                         if (answerData.moral[i].area === "") { currentAreaRowspan++; } else { break; }
+                     }
+                     const areaCell = document.createElement('td');
+                     areaCell.rowSpan = currentAreaRowspan;
+                     areaCell.innerHTML = `<textarea data-subject="moral" data-type="area" data-index="${index}" oninput="checkAnswer(this)"></textarea>`;
+                     areaCell.classList.add('merged-cell');
+                     row.appendChild(areaCell);
+                 }
+                 ['knowledge34', 'knowledge56', 'process34', 'process56', 'values34', 'values56'].forEach(type => {
+                     const cell = document.createElement('td');
+                     if (item[type] === "" || item[type] === undefined) {
+                         cell.innerHTML = `<textarea disabled></textarea>`;
+                     } else {
+                         cell.innerHTML = `<textarea data-subject="moral" data-type="${type}" data-index="${index}" oninput="checkAnswer(this)"></textarea>`;
+                     }
+                     row.appendChild(cell);
+                 });
+                 tbody.appendChild(row);
+             });
+        }
+
+        function generatePracticalTable() {
+             const tbody = document.getElementById('practical-tbody');
+             tbody.innerHTML = '';
+             let currentAreaRowspan = 0;
+             answerData.practical.forEach((item, index) => {
+                 const row = document.createElement('tr');
+                 if (item.area !== "") {
+                     currentAreaRowspan = 1;
+                     for (let i = index + 1; i < answerData.practical.length; i++) {
+                         if (answerData.practical[i].area === "") { currentAreaRowspan++; } else { break; }
+                     }
+                     const areaCell = document.createElement('td');
+                     areaCell.rowSpan = currentAreaRowspan;
+                     areaCell.innerHTML = `<textarea data-subject="practical" data-type="area" data-index="${index}" oninput="checkAnswer(this)"></textarea>`;
+                     areaCell.classList.add('merged-cell');
+                     row.appendChild(areaCell);
+                 }
+                 ['knowledge', 'process', 'values'].forEach(type => {
+                     const cell = document.createElement('td');
+                     if (item[type] === "" || item[type] === undefined) {
+                         cell.innerHTML = `<textarea disabled></textarea>`;
+                     } else {
+                         cell.innerHTML = `<textarea data-subject="practical" data-type="${type}" data-index="${index}" oninput="checkAnswer(this)"></textarea>`;
+                     }
+                     row.appendChild(cell);
+                 });
+                 tbody.appendChild(row);
+             });
+        }
+        
+        function checkAnswer(input) {
+            const { subject, type, index, groupIndex, subIndex, grade, group, colIndex } = input.dataset;
+            const userAnswer = input.value.trim();
+            let correctAnswer = '';
+
+            try {
+                if (subject === 'korean') {
+                    const areaData = answerData.korean[parseInt(index)];
+                    if (areaData.layout_type === 'grid') {
+                        if (type === 'area') correctAnswer = areaData.area;
+                        else {
+                            const colKey = type === 'value' ? `value_${grade.replace('-', '_')}` : type;
+                            correctAnswer = areaData.columns[colKey][parseInt(colIndex)].text;
+                        }
+                    } else {
+                        if (type === 'area') correctAnswer = areaData.area;
+                        else if (type === 'knowledge') correctAnswer = areaData.knowledge_groups[parseInt(groupIndex)].text;
+                        else if (type === 'process') correctAnswer = areaData.knowledge_groups[parseInt(groupIndex)].processes[parseInt(subIndex)];
+                        else if (type === 'value') correctAnswer = areaData.value_groups[grade][parseInt(subIndex)].text;
+                    }
+                } else if (subject === 'social') {
+                    const domainData = answerData.social[group][parseInt(index)];
+                    if (type === 'domain') correctAnswer = domainData.domain;
+                    else if (type === 'concept') correctAnswer = domainData.concepts[parseInt(subIndex)];
+                } else {
+                    const item = answerData[subject][parseInt(index)];
+                    if (item) correctAnswer = item[type];
+                }
+            } catch (e) {
+                correctAnswer = '';
+            }
+
+            if (userAnswer === '') {
+                input.parentElement.classList.remove('correct', 'incorrect');
+            } else if (userAnswer !== '' && userAnswer === correctAnswer) {
+                input.parentElement.classList.add('correct');
+                input.parentElement.classList.remove('incorrect');
+            } else {
+                input.parentElement.classList.add('incorrect');
+                input.parentElement.classList.remove('correct');
+            }
+        }
+
+        function showAnswers(subject) {
+            const inputs = document.querySelectorAll(`textarea[data-subject="${subject}"]`);
+            inputs.forEach(input => {
+                if (input.disabled) return;
+                const { type, index, groupIndex, subIndex, grade, group, colIndex } = input.dataset;
+                let correctAnswer = '';
+                
+                try {
+                     if (subject === 'korean') {
+                        const areaData = answerData.korean[parseInt(index)];
+                        if (areaData.layout_type === 'grid') {
+                           if (type === 'area') correctAnswer = areaData.area;
+                           else {
+                                const colKey = type === 'value' ? `value_${grade.replace('-', '_')}` : type;
+                                correctAnswer = areaData.columns[colKey][parseInt(colIndex)].text;
+                           }
+                        } else {
+                           if (type === 'area') correctAnswer = areaData.area;
+                           else if (type === 'knowledge') correctAnswer = areaData.knowledge_groups[parseInt(groupIndex)].text;
+                           else if (type === 'process') correctAnswer = areaData.knowledge_groups[parseInt(groupIndex)].processes[parseInt(subIndex)];
+                           else if (type === 'value') correctAnswer = areaData.value_groups[grade][parseInt(subIndex)].text;
+                        }
+                    } else if (subject === 'social') {
+                        const domainData = answerData.social[group][parseInt(index)];
+                        if (type === 'domain') correctAnswer = domainData.domain;
+                        else if (type === 'concept') correctAnswer = domainData.concepts[parseInt(subIndex)];
+                    } else {
+                        const item = answerData[subject][parseInt(index)];
+                        if (item) correctAnswer = item[type];
+                    }
+                } catch (e) {
+                    correctAnswer = '';
+                }
+
+                input.value = correctAnswer || '';
+                 if (correctAnswer) {
+                    input.parentElement.classList.add('correct');
+                    input.parentElement.classList.remove('incorrect');
+                } else {
+                    input.parentElement.classList.remove('correct', 'incorrect');
+                }
+            });
+        }
+
+        function clearAnswers(subject) {
+            const inputs = document.querySelectorAll(`textarea[data-subject="${subject}"]`);
+            inputs.forEach(input => {
+                input.value = '';
+                input.parentElement.classList.remove('correct', 'incorrect');
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            generateKoreanTable();
+            generateMusicTable();
+            generateMusicComponentsTable();
+            generateSocialTable();
+            generateMoralTable();
+            generatePracticalTable();
+        });
+    </script>
+</body>
+</html>
