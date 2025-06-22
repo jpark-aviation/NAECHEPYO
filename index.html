@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>내체표 암기</title>
+    <title>내체표 암기 프로그램 (PC/모바일 지원)</title>
     <style>
+    /* --- 기본 스타일 (PC) --- */
     body {
         font-family: Arial, sans-serif;
         margin: 0;
         background-color: #f5f5f5;
+        line-height: 1.5;
     }
     
     .container {
@@ -17,8 +19,6 @@
         margin: 0 auto;
         background-color: white;
         padding: 20px;
-        border-radius: 0;
-        box-shadow: none;
         box-sizing: border-box;
     }
     
@@ -63,7 +63,7 @@
         cursor: pointer;
         font-size: 14px;
         font-weight: bold;
-        flex-grow: 0;
+        transition: opacity 0.2s;
     }
     
     .btn-show {
@@ -83,14 +83,13 @@
     table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 0;
     }
     
     th, td {
         border: 1px solid #ddd;
         padding: 8px;
         text-align: center;
-        vertical-align: top;
+        vertical-align: middle; /* 기본 수직 정렬을 middle로 변경 */
         font-size: 12px;
     }
     
@@ -98,7 +97,6 @@
         background-color: #e0e0e0;
         font-weight: bold;
         color: #333;
-        vertical-align: middle;
     }
     
     textarea {
@@ -108,7 +106,7 @@
         border: 1px solid #ddd;
         border-radius: 3px;
         font-size: 12px;
-        font-family: Arial, sans-serif;
+        font-family: inherit;
         resize: vertical;
         box-sizing: border-box;
         line-height: 1.5;
@@ -119,17 +117,8 @@
         cursor: not-allowed;
     }
     
-    .correct {
-        background-color: #e8f5e8 !important;
-    }
-    
-    .incorrect {
-        background-color: #ffe8e8 !important;
-    }
-    
-    .merged-cell {
-        vertical-align: middle;
-    }
+    .correct { background-color: #e8f5e8 !important; }
+    .incorrect { background-color: #ffe8e8 !important; }
     
     .music-components {
         margin-top: 20px;
@@ -144,33 +133,21 @@
         padding: 10px;
     }
 
-    /* --- 모바일 반응형 스타일 (수정됨) --- */
+    /* --- 모바일 반응형 스타일 --- */
     @media screen and (max-width: 768px) {
-        body {
-            margin: 0;
-        }
-        .container {
-            padding: 10px;
-            border-radius: 0;
-        }
-        h1 {
-            font-size: 20px;
-            margin-bottom: 20px;
-        }
-        .controls {
-            flex-direction: column;
-        }
-        .btn {
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-        }
+        body { margin: 0; }
+        .container { padding: 10px; }
+        h1 { font-size: 20px; margin-bottom: 20px; }
+        
+        .controls { flex-direction: column; }
+        .btn { width: 100%; padding: 12px; font-size: 16px; }
 
-        /* 테이블을 카드 형태로 변환 */
+        /* 핵심: 테이블 구조를 블록 레벨 요소로 변경하여 수직으로 쌓이게 함 */
         table, thead, tbody, th, td, tr {
             display: block;
         }
 
+        /* PC 버전의 a헤더(thead)는 화면 밖으로 숨김 */
         thead tr {
             position: absolute;
             top: -9999px;
@@ -184,29 +161,27 @@
             background-color: #fff;
         }
         
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
+        tr:nth-child(even) { background-color: #f9f9f9; }
 
         td {
             border: none;
             border-bottom: 1px solid #eee;
             position: relative;
-            padding-left: 45% !important; /* !important 추가하여 우선순위 확보 */
+            /* 중요: 왼쪽 패딩을 주어 '가상 레이블'이 들어갈 공간 확보 */
+            padding-left: 45% !important; 
             min-height: 30px;
-            text-align: right !important; /* !important 추가하여 우선순위 확보 */
-            vertical-align: middle;
+            text-align: right !important; /* 내용은 오른쪽에 정렬 */
+            display: flex; /* 내부 요소 정렬을 위해 flex 사용 */
+            align-items: center; /* 수직 중앙 정렬 */
             padding-top: 10px;
             padding-bottom: 10px;
         }
         
-        /* 마지막 셀의 하단 테두리 제거 */
-        td:last-child {
-            border-bottom: 0;
-        }
+        td:last-child { border-bottom: 0; }
 
+        /* 중요: JavaScript에서 설정한 data-label 값을 가져와 각 셀의 제목으로 사용 */
         td:before {
-            content: attr(data-label);
+            content: attr(data-label); /* data-label 속성값을 내용으로 사용 */
             position: absolute;
             left: 10px;
             width: 40%;
@@ -214,26 +189,21 @@
             white-space: normal;
             text-align: left;
             font-weight: bold;
-            vertical-align: middle;
+            color: #333;
+            /* 절대 위치 요소의 수직 중앙 정렬 기법 */
             top: 50%;
             transform: translateY(-50%);
         }
         
-        /* [수정] merged-cell 관련 특별 규칙을 제거하여 다른 셀과 동일하게 보이도록 함 */
-        /* 이전에 이 부분에서 레이블을 숨기고 있었음 */
-
         textarea {
             width: 100%;
             font-size: 14px;
+            min-height: 50px;
         }
 
-        /* 사회 과목 같이 열이 많은 테이블 특별 처리 */
-        #social-table td {
-            padding-left: 35% !important;
-        }
-        #social-table td:before {
-            width: 30%;
-        }
+        /* 사회 과목처럼 레이블이 긴 테이블을 위한 특별 처리 */
+        #social-table td { padding-left: 35% !important; }
+        #social-table td:before { width: 30%; }
     }
     </style>
 </head>
@@ -261,8 +231,7 @@
                         <th>5~6학년</th>
                     </tr>
                 </thead>
-                <tbody id="korean-tbody">
-                </tbody>
+                <tbody id="korean-tbody"></tbody>
             </table>
         </div>
         
@@ -289,8 +258,7 @@
                         <th>5~6학년</th>
                     </tr>
                 </thead>
-                <tbody id="music-tbody">
-                </tbody>
+                <tbody id="music-tbody"></tbody>
             </table>
             
             <div class="music-components">
@@ -310,8 +278,7 @@
                             <th>5~6학년</th>
                         </tr>
                     </thead>
-                    <tbody id="music-components-tbody">
-                    </tbody>
+                    <tbody id="music-components-tbody"></tbody>
                 </table>
             </div>
         </div>
@@ -333,8 +300,7 @@
                         <th>핵심개념</th>
                     </tr>
                 </thead>
-                <tbody id="social-tbody">
-                </tbody>
+                <tbody id="social-tbody"></tbody>
             </table>
         </div>
         
@@ -361,8 +327,7 @@
                         <th>5~6학년</th>
                     </tr>
                 </thead>
-                <tbody id="moral-tbody">
-                </tbody>
+                <tbody id="moral-tbody"></tbody>
             </table>
         </div>
         
@@ -381,8 +346,7 @@
                         <th>가치·태도</th>
                     </tr>
                 </thead>
-                <tbody id="practical-tbody">
-                </tbody>
+                <tbody id="practical-tbody"></tbody>
             </table>
         </div>
     </div>
@@ -590,6 +554,8 @@
             ]
         };
 
+        // --- 테이블 생성 함수들 --- //
+
         function generateKoreanTable() {
             const tbody = document.getElementById('korean-tbody');
             tbody.innerHTML = ''; 
@@ -600,10 +566,9 @@
                     
                     const areaCell = document.createElement('td');
                     areaCell.rowSpan = total_rows;
-                    areaCell.classList.add('merged-cell');
                     areaCell.innerHTML = `<textarea data-subject="korean" data-type="area" data-index="${areaIndex}" oninput="checkAnswer(this)"></textarea>`;
+                    areaCell.dataset.label = "영역"; // 모바일 뷰를 위한 레이블
                     rows[0].appendChild(areaCell);
-                    areaCell.dataset.label = "영역";
 
                     const columnOrder = ['knowledge', 'process', 'value_1_2', 'value_3_4', 'value_5_6'];
                     const labels = {
@@ -620,7 +585,7 @@
                             cell.rowSpan = cellData.span;
                             const dataAttrs = `data-subject="korean" data-type="${cellData.type}" data-index="${areaIndex}" data-col-index="${cellData.col_index}" ${cellData.grade ? `data-grade="${cellData.grade}"` : ''}`;
                             cell.innerHTML = `<textarea ${dataAttrs} oninput="checkAnswer(this)"></textarea>`;
-                            cell.dataset.label = labels[colKey];
+                            cell.dataset.label = labels[colKey]; // 모바일 뷰를 위한 레이블
                             rows[currentRow].appendChild(cell);
                             currentRow += cellData.span;
                         });
@@ -633,8 +598,7 @@
 
                     const areaCell = document.createElement('td');
                     areaCell.rowSpan = totalRows;
-                    areaCell.classList.add('merged-cell');
-                    areaCell.dataset.label = "영역";
+                    areaCell.dataset.label = "영역"; // 모바일 뷰를 위한 레이블
                     areaCell.innerHTML = `<textarea data-subject="korean" data-type="area" data-index="${areaIndex}" oninput="checkAnswer(this)"></textarea>`;
                     if(rows.length > 0) rows[0].appendChild(areaCell);
 
@@ -643,20 +607,20 @@
                         const knowledgeSpan = Math.max(1, kg.processes.length);
                         const knowledgeCell = document.createElement('td');
                         knowledgeCell.rowSpan = knowledgeSpan;
-                        knowledgeCell.dataset.label = "지식이해";
+                        knowledgeCell.dataset.label = "지식이해"; // 모바일 뷰를 위한 레이블
                         knowledgeCell.innerHTML = `<textarea data-subject="korean" data-type="knowledge" data-index="${areaIndex}" data-group-index="${kgIndex}" oninput="checkAnswer(this)"></textarea>`;
                         rows[currentRowIndex].appendChild(knowledgeCell);
 
                         if (kg.processes.length > 0) {
                             kg.processes.forEach((proc, procIndex) => {
                                 const processCell = document.createElement('td');
-                                processCell.dataset.label = "과정기능";
+                                processCell.dataset.label = "과정기능"; // 모바일 뷰를 위한 레이블
                                 processCell.innerHTML = `<textarea data-subject="korean" data-type="process" data-index="${areaIndex}" data-group-index="${kgIndex}" data-sub-index="${procIndex}" oninput="checkAnswer(this)"></textarea>`;
                                 rows[currentRowIndex + procIndex].appendChild(processCell);
                             });
                         } else {
                             const processCell = document.createElement('td');
-                             processCell.dataset.label = "과정기능";
+                            processCell.dataset.label = "과정기능";
                             processCell.innerHTML = `<textarea disabled></textarea>`;
                             rows[currentRowIndex].appendChild(processCell);
                         }
@@ -668,7 +632,7 @@
                         areaData.value_groups[gradeKey].forEach((vg, vgIndex) => {
                             const valueCell = document.createElement('td');
                             valueCell.rowSpan = vg.span;
-                            valueCell.dataset.label = `가치태도 (${gradeKey.replace('-', '~')}학년)`;
+                            valueCell.dataset.label = `가치태도 (${gradeKey.replace('-', '~')}학년)`; // 모바일 뷰를 위한 레이블
                             valueCell.innerHTML = `<textarea data-subject="korean" data-type="value" data-grade="${gradeKey}" data-index="${areaIndex}" data-sub-index="${vgIndex}" oninput="checkAnswer(this)"></textarea>`;
                             rows[valueRowIndex].appendChild(valueCell);
                             valueRowIndex += vg.span;
@@ -679,78 +643,44 @@
             });
         }
         
-        function generateMusicTable() {
-             const tbody = document.getElementById('music-tbody');
-             tbody.innerHTML = '';
-             let currentAreaRowspan = 0;
-             const labels = {
-                 area: "영역",
-                 knowledge34: "지식·이해 (3~4)", knowledge56: "지식·이해 (5~6)",
-                 process34: "과정·기능 (3~4)", process56: "과정·기능 (5~6)",
-                 values34: "가치·태도 (3~4)", values56: "가치·태도 (5~6)"
-             };
-             answerData.music.forEach((item, index) => {
-                 const row = document.createElement('tr');
-                 if (item.area !== "") {
-                     currentAreaRowspan = 1;
-                     for (let i = index + 1; i < answerData.music.length; i++) {
-                         if (answerData.music[i].area === "") { currentAreaRowspan++; } else { break; }
-                     }
-                     const areaCell = document.createElement('td');
-                     areaCell.rowSpan = currentAreaRowspan;
-                     areaCell.innerHTML = `<textarea data-subject="music" data-type="area" data-index="${index}" oninput="checkAnswer(this)"></textarea>`;
-                     areaCell.classList.add('merged-cell');
-                     areaCell.dataset.label = labels.area;
-                     row.appendChild(areaCell);
-                 }
-                 ['knowledge34', 'knowledge56', 'process34', 'process56', 'values34', 'values56'].forEach(type => {
-                     const cell = document.createElement('td');
-                     cell.dataset.label = labels[type];
-                     if (item[type] === "" || item[type] === undefined) {
-                         cell.innerHTML = `<textarea disabled></textarea>`;
-                     } else {
-                         cell.innerHTML = `<textarea data-subject="music" data-type="${type}" data-index="${index}" oninput="checkAnswer(this)"></textarea>`;
-                     }
-                     row.appendChild(cell);
-                 });
-                 tbody.appendChild(row);
-             });
+        // 공통 테이블 생성 로직을 활용한 함수
+        function generateSimpleTable(config) {
+            const tbody = document.getElementById(config.tbodyId);
+            tbody.innerHTML = '';
+            let currentAreaRowspan = 0;
+            
+            answerData[config.dataKey].forEach((item, index) => {
+                const row = document.createElement('tr');
+
+                // rowspan이 필요한 영역/구성요소 셀 처리
+                if (item[config.areaKey] !== "") {
+                    currentAreaRowspan = 1;
+                    for (let i = index + 1; i < answerData[config.dataKey].length; i++) {
+                        if (answerData[config.dataKey][i][config.areaKey] === "") { currentAreaRowspan++; } 
+                        else { break; }
+                    }
+                    const areaCell = document.createElement('td');
+                    areaCell.rowSpan = currentAreaRowspan;
+                    areaCell.dataset.label = config.labels[config.areaKey]; // 모바일 뷰 레이블
+                    areaCell.innerHTML = `<textarea data-subject="${config.dataKey}" data-type="${config.areaKey}" data-index="${index}" oninput="checkAnswer(this)"></textarea>`;
+                    row.appendChild(areaCell);
+                }
+
+                // 나머지 데이터 셀 처리
+                config.cellKeys.forEach(type => {
+                    const cell = document.createElement('td');
+                    cell.dataset.label = config.labels[type]; // 모바일 뷰 레이블
+                    if (item[type] === "" || item[type] === undefined) {
+                        cell.innerHTML = `<textarea disabled></textarea>`;
+                    } else {
+                        cell.innerHTML = `<textarea data-subject="${config.dataKey}" data-type="${type}" data-index="${index}" oninput="checkAnswer(this)"></textarea>`;
+                    }
+                    row.appendChild(cell);
+                });
+                tbody.appendChild(row);
+            });
         }
 
-        function generateMusicComponentsTable() {
-             const tbody = document.getElementById('music-components-tbody');
-             tbody.innerHTML = '';
-             let currentComponentRowspan = 0;
-             const labels = {
-                 component: "구성요소", grade34: "3~4학년", grade56: "5~6학년"
-             };
-             answerData.musicComponents.forEach((item, index) => {
-                 const row = document.createElement('tr');
-                 if (item.component !== "") {
-                     currentComponentRowspan = 1;
-                     for (let i = index + 1; i < answerData.musicComponents.length; i++) {
-                         if (answerData.musicComponents[i].component === "") { currentComponentRowspan++; } else { break; }
-                     }
-                     const componentCell = document.createElement('td');
-                     componentCell.rowSpan = currentComponentRowspan;
-                     componentCell.innerHTML = `<textarea data-subject="musicComponents" data-type="component" data-index="${index}" oninput="checkAnswer(this)"></textarea>`;
-                     componentCell.classList.add('merged-cell');
-                     componentCell.dataset.label = labels.component;
-                     row.appendChild(componentCell);
-                 }
-                 ['grade34', 'grade56'].forEach(type => {
-                     const cell = document.createElement('td');
-                     cell.dataset.label = labels[type];
-                     if (item[type] === "" || item[type] === undefined) {
-                         cell.innerHTML = `<textarea disabled></textarea>`;
-                     } else {
-                         cell.innerHTML = `<textarea data-subject="musicComponents" data-type="${type}" data-index="${index}" oninput="checkAnswer(this)"></textarea>`;
-                     }
-                     row.appendChild(cell);
-                 });
-                 tbody.appendChild(row);
-             });
-        }
 
         function generateSocialTable() {
             const tbody = document.getElementById('social-tbody');
@@ -762,24 +692,24 @@
 
             let rows = Array.from({ length: totalRows }, () => document.createElement('tr'));
 
-            const populateGroup = (groupData, groupKey, colStartIndex) => {
+            const populateGroup = (groupData, groupKey) => {
                 let currentRow = 0;
+                // 모바일 뷰에서 사용할 레이블 정의
                 const labels = {
-                    domain: `영역 (${groupKey.split('_')[0]})`,
-                    concept: `핵심개념 (${groupKey.split('_')[0]})`
+                    domain: `영역`,
+                    concept: `핵심개념`
                 }
                 groupData.forEach((domainItem, domainIndex) => {
                     const domainSpan = domainItem.concepts.length;
                     const domainCell = document.createElement('td');
                     domainCell.rowSpan = domainSpan;
-                    domainCell.classList.add('merged-cell');
-                    domainCell.dataset.label = labels.domain;
+                    domainCell.dataset.label = labels.domain; // 레이블 설정
                     domainCell.innerHTML = `<textarea data-subject="social" data-type="domain" data-group="${groupKey}" data-index="${domainIndex}" oninput="checkAnswer(this)"></textarea>`;
                     rows[currentRow].appendChild(domainCell);
 
                     domainItem.concepts.forEach((concept, conceptIndex) => {
                         const conceptCell = document.createElement('td');
-                        conceptCell.dataset.label = labels.concept;
+                        conceptCell.dataset.label = labels.concept; // 레이블 설정
                         if(concept){
                              conceptCell.innerHTML = `<textarea data-subject="social" data-type="concept" data-group="${groupKey}" data-index="${domainIndex}" data-sub-index="${conceptIndex}" oninput="checkAnswer(this)"></textarea>`;
                         } else {
@@ -789,6 +719,7 @@
                     });
                     currentRow += domainSpan;
                 });
+                // 빈 셀 채우기
                 for (let i = currentRow; i < totalRows; i++) {
                     const emptyCell1 = document.createElement('td');
                     const emptyCell2 = document.createElement('td');
@@ -801,123 +732,55 @@
                 }
             };
             
-            populateGroup(politics_law, 'politics_law', 0);
-            populateGroup(geography, 'geography', 2);
-            populateGroup(history, 'history', 4);
+            populateGroup(politics_law, 'politics_law');
+            populateGroup(geography, 'geography');
+            populateGroup(history, 'history');
 
             rows.forEach(row => tbody.appendChild(row));
         }
 
-        function generateMoralTable() {
-             const tbody = document.getElementById('moral-tbody');
-             tbody.innerHTML = '';
-             let currentAreaRowspan = 0;
-             const labels = {
-                 area: "영역",
-                 knowledge34: "지식·이해 (3~4)", knowledge56: "지식·이해 (5~6)",
-                 process34: "과정·기능 (3~4)", process56: "과정·기능 (5~6)",
-                 values34: "가치·태도 (3~4)", values56: "가치·태도 (5~6)"
-             };
-             answerData.moral.forEach((item, index) => {
-                 const row = document.createElement('tr');
-                 if (item.area !== "") {
-                     currentAreaRowspan = 1;
-                     for (let i = index + 1; i < answerData.moral.length; i++) {
-                         if (answerData.moral[i].area === "") { currentAreaRowspan++; } else { break; }
-                     }
-                     const areaCell = document.createElement('td');
-                     areaCell.rowSpan = currentAreaRowspan;
-                     areaCell.innerHTML = `<textarea data-subject="moral" data-type="area" data-index="${index}" oninput="checkAnswer(this)"></textarea>`;
-                     areaCell.classList.add('merged-cell');
-                     areaCell.dataset.label = labels.area;
-                     row.appendChild(areaCell);
-                 }
-                 ['knowledge34', 'knowledge56', 'process34', 'process56', 'values34', 'values56'].forEach(type => {
-                     const cell = document.createElement('td');
-                     cell.dataset.label = labels[type];
-                     if (item[type] === "" || item[type] === undefined) {
-                         cell.innerHTML = `<textarea disabled></textarea>`;
-                     } else {
-                         cell.innerHTML = `<textarea data-subject="moral" data-type="${type}" data-index="${index}" oninput="checkAnswer(this)"></textarea>`;
-                     }
-                     row.appendChild(cell);
-                 });
-                 tbody.appendChild(row);
-             });
-        }
+        // --- 핵심 기능 함수들 --- //
 
-        function generatePracticalTable() {
-             const tbody = document.getElementById('practical-tbody');
-             tbody.innerHTML = '';
-             let currentAreaRowspan = 0;
-             const labels = {
-                 area: "영역", knowledge: "지식·이해", process: "과정·기능", values: "가치·태도"
-             };
-             answerData.practical.forEach((item, index) => {
-                 const row = document.createElement('tr');
-                 if (item.area !== "") {
-                     currentAreaRowspan = 1;
-                     for (let i = index + 1; i < answerData.practical.length; i++) {
-                         if (answerData.practical[i].area === "") { currentAreaRowspan++; } else { break; }
-                     }
-                     const areaCell = document.createElement('td');
-                     areaCell.rowSpan = currentAreaRowspan;
-                     areaCell.innerHTML = `<textarea data-subject="practical" data-type="area" data-index="${index}" oninput="checkAnswer(this)"></textarea>`;
-                     areaCell.classList.add('merged-cell');
-                     areaCell.dataset.label = labels.area;
-                     row.appendChild(areaCell);
-                 }
-                 ['knowledge', 'process', 'values'].forEach(type => {
-                     const cell = document.createElement('td');
-                     cell.dataset.label = labels[type];
-                     if (item[type] === "" || item[type] === undefined) {
-                         cell.innerHTML = `<textarea disabled></textarea>`;
-                     } else {
-                         cell.innerHTML = `<textarea data-subject="practical" data-type="${type}" data-index="${index}" oninput="checkAnswer(this)"></textarea>`;
-                     }
-                     row.appendChild(cell);
-                 });
-                 tbody.appendChild(row);
-             });
-        }
-        
         function checkAnswer(input) {
             const { subject, type, index, groupIndex, subIndex, grade, group, colIndex } = input.dataset;
-            const userAnswer = input.value.trim().replace(/\s+/g, ' '); // 공백 정규화 추가
+            // 사용자가 입력한 답안에서 앞뒤/중간의 여러 공백을 단일 공백으로 정규화
+            const userAnswer = input.value.trim().replace(/\s+/g, ' '); 
             let correctAnswer = '';
 
             try {
                 if (subject === 'korean') {
-                    const areaData = answerData.korean[parseInt(index)];
+                    const areaData = answerData.korean[parseInt(index, 10)];
                     if (areaData.layout_type === 'grid') {
                         if (type === 'area') correctAnswer = areaData.area;
                         else {
                             const colKey = type === 'value' ? `value_${grade.replace('-', '_')}` : type;
-                            correctAnswer = areaData.columns[colKey][parseInt(colIndex)].text;
+                            correctAnswer = areaData.columns[colKey][parseInt(colIndex, 10)].text;
                         }
                     } else {
                         if (type === 'area') correctAnswer = areaData.area;
-                        else if (type === 'knowledge') correctAnswer = areaData.knowledge_groups[parseInt(groupIndex)].text;
-                        else if (type === 'process') correctAnswer = areaData.knowledge_groups[parseInt(groupIndex)].processes[parseInt(subIndex)];
-                        else if (type === 'value') correctAnswer = areaData.value_groups[grade][parseInt(subIndex)].text;
+                        else if (type === 'knowledge') correctAnswer = areaData.knowledge_groups[parseInt(groupIndex, 10)].text;
+                        else if (type === 'process') correctAnswer = areaData.knowledge_groups[parseInt(groupIndex, 10)].processes[parseInt(subIndex, 10)];
+                        else if (type === 'value') correctAnswer = areaData.value_groups[grade][parseInt(subIndex, 10)].text;
                     }
                 } else if (subject === 'social') {
-                    const domainData = answerData.social[group][parseInt(index)];
+                    const domainData = answerData.social[group][parseInt(index, 10)];
                     if (type === 'domain') correctAnswer = domainData.domain;
-                    else if (type === 'concept') correctAnswer = domainData.concepts[parseInt(subIndex)];
+                    else if (type === 'concept') correctAnswer = domainData.concepts[parseInt(subIndex, 10)];
                 } else {
-                    const item = answerData[subject][parseInt(index)];
+                    const item = answerData[subject][parseInt(index, 10)];
                     if (item) correctAnswer = item[type];
                 }
             } catch (e) {
+                console.error("정답을 찾는 중 오류 발생:", e);
                 correctAnswer = '';
             }
             
-            correctAnswer = correctAnswer.trim().replace(/\s+/g, ' ');
+            // 정답 데이터도 동일하게 공백 정규화
+            correctAnswer = (correctAnswer || '').trim().replace(/\s+/g, ' ');
 
             if (userAnswer === '') {
                 input.parentElement.classList.remove('correct', 'incorrect');
-            } else if (userAnswer !== '' && userAnswer === correctAnswer) {
+            } else if (userAnswer === correctAnswer) {
                 input.parentElement.classList.add('correct');
                 input.parentElement.classList.remove('incorrect');
             } else {
@@ -935,25 +798,25 @@
                 
                 try {
                      if (subject === 'korean') {
-                        const areaData = answerData.korean[parseInt(index)];
+                        const areaData = answerData.korean[parseInt(index, 10)];
                         if (areaData.layout_type === 'grid') {
                            if (type === 'area') correctAnswer = areaData.area;
                            else {
                                 const colKey = type === 'value' ? `value_${grade.replace('-', '_')}` : type;
-                                correctAnswer = areaData.columns[colKey][parseInt(colIndex)].text;
+                                correctAnswer = areaData.columns[colKey][parseInt(colIndex, 10)].text;
                            }
                         } else {
                            if (type === 'area') correctAnswer = areaData.area;
-                           else if (type === 'knowledge') correctAnswer = areaData.knowledge_groups[parseInt(groupIndex)].text;
-                           else if (type === 'process') correctAnswer = areaData.knowledge_groups[parseInt(groupIndex)].processes[parseInt(subIndex)];
-                           else if (type === 'value') correctAnswer = areaData.value_groups[grade][parseInt(subIndex)].text;
+                           else if (type === 'knowledge') correctAnswer = areaData.knowledge_groups[parseInt(groupIndex, 10)].text;
+                           else if (type === 'process') correctAnswer = areaData.knowledge_groups[parseInt(groupIndex, 10)].processes[parseInt(subIndex, 10)];
+                           else if (type === 'value') correctAnswer = areaData.value_groups[grade][parseInt(subIndex, 10)].text;
                         }
                     } else if (subject === 'social') {
-                        const domainData = answerData.social[group][parseInt(index)];
+                        const domainData = answerData.social[group][parseInt(index, 10)];
                         if (type === 'domain') correctAnswer = domainData.domain;
-                        else if (type === 'concept') correctAnswer = domainData.concepts[parseInt(subIndex)];
+                        else if (type === 'concept') correctAnswer = domainData.concepts[parseInt(subIndex, 10)];
                     } else {
-                        const item = answerData[subject][parseInt(index)];
+                        const item = answerData[subject][parseInt(index, 10)];
                         if (item) correctAnswer = item[type];
                     }
                 } catch (e) {
@@ -961,7 +824,8 @@
                 }
 
                 input.value = correctAnswer || '';
-                 if (correctAnswer) {
+                // 정답을 보여줄 때도 정답/오답 표시를 업데이트
+                if (correctAnswer) {
                     input.parentElement.classList.add('correct');
                     input.parentElement.classList.remove('incorrect');
                 } else {
@@ -978,13 +842,39 @@
             });
         }
         
+        // --- 페이지 로드 시 실행 --- //
         document.addEventListener('DOMContentLoaded', function() {
+            // 국어, 사회 테이블 생성
             generateKoreanTable();
-            generateMusicTable();
-            generateMusicComponentsTable();
             generateSocialTable();
-            generateMoralTable();
-            generatePracticalTable();
+
+            // 음악 테이블 생성
+            generateSimpleTable({
+                tbodyId: 'music-tbody', dataKey: 'music', areaKey: 'area',
+                cellKeys: ['knowledge34', 'knowledge56', 'process34', 'process56', 'values34', 'values56'],
+                labels: { area: "영역", knowledge34: "지식·이해 (3~4)", knowledge56: "지식·이해 (5~6)", process34: "과정·기능 (3~4)", process56: "과정·기능 (5~6)", values34: "가치·태도 (3~4)", values56: "가치·태도 (5~6)" }
+            });
+
+            // 음악 구성요소 테이블 생성
+            generateSimpleTable({
+                tbodyId: 'music-components-tbody', dataKey: 'musicComponents', areaKey: 'component',
+                cellKeys: ['grade34', 'grade56'],
+                labels: { component: "구성요소", grade34: "3~4학년", grade56: "5~6학년" }
+            });
+            
+            // 도덕 테이블 생성
+            generateSimpleTable({
+                tbodyId: 'moral-tbody', dataKey: 'moral', areaKey: 'area',
+                cellKeys: ['knowledge34', 'knowledge56', 'process34', 'process56', 'values34', 'values56'],
+                labels: { area: "영역", knowledge34: "지식·이해 (3~4)", knowledge56: "지식·이해 (5~6)", process34: "과정·기능 (3~4)", process56: "과정·기능 (5~6)", values34: "가치·태도 (3~4)", values56: "가치·태도 (5~6)" }
+            });
+
+            // 실과 테이블 생성
+            generateSimpleTable({
+                tbodyId: 'practical-tbody', dataKey: 'practical', areaKey: 'area',
+                cellKeys: ['knowledge', 'process', 'values'],
+                labels: { area: "영역", knowledge: "지식·이해", process: "과정·기능", values: "가치·태도" }
+            });
         });
     </script>
 </body>
